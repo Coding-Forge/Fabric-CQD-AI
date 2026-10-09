@@ -1,0 +1,38 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "card06loss00000000001",
+  "position": {
+    "x": 1560.0999063378076,
+    "y": 60.998720819283569,
+    "z": 6,
+    "height": 110,
+    "width": 290,
+    "tabOrder": 6
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "MediaStreams"
+                    }
+                  },
+                  "Property": "Avg Packet Loss %"
+                }
+              },
+              "queryRef": "MediaStreams.Avg Packet Loss %",
+              "nativeQueryRef": "Avg Packet Loss %"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

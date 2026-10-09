@@ -1,0 +1,77 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "slicer1platform001",
+  "position": {
+    "x": 320.09990633780831,
+    "y": 4.7955042147986262,
+    "z": 11,
+    "height": 56.347174523883858,
+    "width": 260.15610365282549,
+    "tabOrder": 11
+  },
+  "visual": {
+    "visualType": "slicer",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Sessions"
+                    }
+                  },
+                  "Property": "CallerPlatform"
+                }
+              },
+              "queryRef": "Sessions.CallerPlatform",
+              "nativeQueryRef": "CallerPlatform",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "data": [
+        {
+          "properties": {
+            "mode": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Dropdown'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {}
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "130e8837a434a2fedae3",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Sessions"
+              }
+            },
+            "Property": "CallerPlatform"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
+  }
+}

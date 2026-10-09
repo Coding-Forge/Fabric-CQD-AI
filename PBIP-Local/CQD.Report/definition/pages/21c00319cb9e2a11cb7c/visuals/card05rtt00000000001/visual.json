@@ -1,0 +1,38 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "card05rtt00000000001",
+  "position": {
+    "x": 1250.0999063378076,
+    "y": 60.998720819283569,
+    "z": 5,
+    "height": 110,
+    "width": 290,
+    "tabOrder": 5
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "MediaStreams"
+                    }
+                  },
+                  "Property": "Avg Round Trip (ms)"
+                }
+              },
+              "queryRef": "MediaStreams.Avg Round Trip (ms)",
+              "nativeQueryRef": "Avg Round Trip (ms)"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

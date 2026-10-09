@@ -1,0 +1,38 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "p2cardgood0000001",
+  "position": {
+    "x": 10,
+    "y": 60,
+    "z": 2,
+    "height": 130,
+    "width": 400,
+    "tabOrder": 2
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "MediaStreams"
+                    }
+                  },
+                  "Property": "Good Stream %"
+                }
+              },
+              "queryRef": "MediaStreams.Good Stream %",
+              "nativeQueryRef": "Good Stream %"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

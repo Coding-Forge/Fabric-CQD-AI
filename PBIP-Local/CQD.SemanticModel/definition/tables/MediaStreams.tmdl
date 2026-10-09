@@ -1,0 +1,201 @@
+table MediaStreams
+	lineageTag: 6b0d3c1e-5a52-4d0e-9a53-0f3c9d1b0005
+
+	measure 'Stream Count' = COUNTROWS(MediaStreams)
+		formatString: 0
+		lineageTag: 4e0bb9a7-e96b-48ea-8afb-65a70ea3439e
+
+	measure 'Avg Jitter (ms)' = AVERAGE(MediaStreams[AvgJitterMs])
+		formatString: 0.0
+		lineageTag: d3b34d57-f67b-40b6-8a86-ef8c7cc69c8d
+
+	measure 'Max Jitter (ms)' = MAX(MediaStreams[MaxJitterMs])
+		formatString: 0.0
+		lineageTag: 217487df-27c9-4050-8c30-29014e38a029
+
+	measure 'Avg Round Trip (ms)' = AVERAGE(MediaStreams[AvgRoundTripMs])
+		formatString: 0.0
+		lineageTag: 3d24109b-4eb5-4fea-8424-7d9c9e326715
+
+	measure 'Avg Packet Loss %' = AVERAGE(MediaStreams[AvgPacketLossRate])
+		formatString: 0.00%
+		lineageTag: d5021e90-8d37-4e87-aa2f-658ffd53bcfd
+
+	measure 'Max Packet Loss %' = MAX(MediaStreams[MaxPacketLossRate])
+		formatString: 0.00%
+		lineageTag: 916b2b76-6c87-4df1-8596-75cbf869f744
+
+	measure 'Avg Concealed Samples %' = AVERAGE(MediaStreams[AvgConcealedRatio])
+		formatString: 0.00%
+		lineageTag: 13ea89c1-7bc2-4570-8c97-3951724027d1
+
+	measure 'Poor Streams (loss >10% or RTT >500ms)' = CALCULATE(COUNTROWS(MediaStreams), FILTER(MediaStreams, MediaStreams[AvgPacketLossRate] > 0.1 || MediaStreams[AvgRoundTripMs] > 500))
+		formatString: 0
+		lineageTag: e577bab1-c87c-4dd3-b02f-ebe56170f182
+
+	measure 'Good Stream %' = DIVIDE(CALCULATE(COUNTROWS(MediaStreams), MediaStreams[StreamQuality] = "Good"), CALCULATE(COUNTROWS(MediaStreams), MediaStreams[StreamQuality] <> "No data"))
+		formatString: 0.0%
+		lineageTag: 56966c40-ee8c-4f17-a85d-0d6b69acc5eb
+
+	column CallId
+		dataType: string
+		lineageTag: d27dac14-487d-4dc0-a9bc-81346270c8ec
+		summarizeBy: none
+		sourceColumn: CallId
+
+	column SessionId
+		dataType: string
+		lineageTag: 81b6cf43-0ff1-4060-939c-55b1c716278c
+		summarizeBy: none
+		sourceColumn: SessionId
+
+	column SegmentId
+		dataType: string
+		lineageTag: 363499ca-9ac2-4415-adb6-eafcaf2ce6f0
+		summarizeBy: none
+		sourceColumn: SegmentId
+
+	column StreamId
+		dataType: string
+		lineageTag: c266d490-3e81-4fd5-8c5b-73785cb244eb
+		summarizeBy: none
+		sourceColumn: StreamId
+
+	column MediaLabel
+		dataType: string
+		lineageTag: 14448494-0a0d-45fe-a183-10b1ee808c73
+		summarizeBy: none
+		sourceColumn: MediaLabel
+
+	column Direction
+		dataType: string
+		lineageTag: ea00d8b1-9843-4c48-8d77-df6745ca07f0
+		summarizeBy: none
+		sourceColumn: Direction
+
+	column AudioCodec
+		dataType: string
+		lineageTag: eaf46800-d74a-473a-b586-b7c24d94aa0d
+		summarizeBy: none
+		sourceColumn: AudioCodec
+
+	column VideoCodec
+		dataType: string
+		lineageTag: 9b845080-cb6e-495a-916a-5c890486907c
+		summarizeBy: none
+		sourceColumn: VideoCodec
+
+	column AvgJitterMs
+		dataType: double
+		lineageTag: 9d0b4e1b-8132-4cbe-b7da-6298fe5ae85b
+		summarizeBy: average
+		sourceColumn: AvgJitterMs
+
+	column MaxJitterMs
+		dataType: double
+		lineageTag: eae3848f-7cc6-4928-8bf8-15a070b5172b
+		summarizeBy: max
+		sourceColumn: MaxJitterMs
+
+	column AvgRoundTripMs
+		dataType: double
+		lineageTag: 0c6b42ff-7226-48de-a87e-ee75e59eec21
+		summarizeBy: average
+		sourceColumn: AvgRoundTripMs
+
+	column MaxRoundTripMs
+		dataType: double
+		lineageTag: e6625410-c651-451b-b62f-44274b5ed72a
+		summarizeBy: max
+		sourceColumn: MaxRoundTripMs
+
+	column AvgPacketLossRate
+		dataType: double
+		lineageTag: dfdc6e30-fcf4-4d86-87f2-dde32044c8ff
+		summarizeBy: average
+		sourceColumn: AvgPacketLossRate
+
+	column MaxPacketLossRate
+		dataType: double
+		lineageTag: 644e8523-940f-416e-a875-f87c2f628c9e
+		summarizeBy: max
+		sourceColumn: MaxPacketLossRate
+
+	column AvgConcealedRatio
+		dataType: double
+		lineageTag: 5e30a08d-7e80-47b7-8651-a06b09efac33
+		summarizeBy: average
+		sourceColumn: AvgConcealedRatio
+
+	column MaxConcealedRatio
+		dataType: double
+		lineageTag: a4bdcec9-ba90-4eee-b40b-9257902b2f86
+		summarizeBy: max
+		sourceColumn: MaxConcealedRatio
+
+	column AvgAudioDegradation
+		dataType: double
+		lineageTag: 3a493b31-ce94-4058-b7f4-a6ec878012b4
+		summarizeBy: average
+		sourceColumn: AvgAudioDegradation
+
+	column PacketUtilization
+		dataType: int64
+		lineageTag: 44a747b6-f54b-4944-8bbc-8aa9099c8baa
+		summarizeBy: sum
+		sourceColumn: PacketUtilization
+
+	column CallerConnectionType
+		dataType: string
+		lineageTag: f469d197-8fcf-4fa3-ae03-6903aa85f64e
+		summarizeBy: none
+		sourceColumn: CallerConnectionType
+
+	column CallerWifiBand
+		dataType: string
+		lineageTag: fef8e000-5580-4c5d-99db-c480e92a9eba
+		summarizeBy: none
+		sourceColumn: CallerWifiBand
+
+	column CalleeConnectionType
+		dataType: string
+		lineageTag: 408365f6-6236-4014-8aa8-949d8007b7f8
+		summarizeBy: none
+		sourceColumn: CalleeConnectionType
+
+	column CalleeWifiBand
+		dataType: string
+		lineageTag: f7deae14-804a-439b-86fd-6f7b4dd8bd4b
+		summarizeBy: none
+		sourceColumn: CalleeWifiBand
+
+	column TransportProtocol
+		dataType: string
+		lineageTag: d82f87f1-6105-465f-8955-66298a9e5931
+		summarizeBy: none
+		sourceColumn: TransportProtocol
+
+	column StreamQuality =
+			SWITCH(
+			    TRUE(),
+			    ISBLANK(MediaStreams[AvgJitterMs]) && ISBLANK(MediaStreams[AvgRoundTripMs]) && ISBLANK(MediaStreams[AvgPacketLossRate]), "No data",
+			    MediaStreams[AvgPacketLossRate] > 0.1 || MediaStreams[AvgRoundTripMs] > 500 || MediaStreams[AvgJitterMs] > 30 || MediaStreams[AvgAudioDegradation] > 1, "Poor",
+			    MediaStreams[AvgPacketLossRate] > 0.05 || MediaStreams[AvgRoundTripMs] > 300 || MediaStreams[AvgJitterMs] > 15, "Fair",
+			    "Good"
+			)
+		dataType: string
+		lineageTag: af5f7db0-6b35-44b1-aad3-2d6a3ff82fe2
+		summarizeBy: none
+
+	partition MediaStreams = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(SamplesFolder & "\MediaStreams.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"CallId", type text}, {"SessionId", type text}, {"SegmentId", type text}, {"StreamId", type text}, {"MediaLabel", type text}, {"Direction", type text}, {"AudioCodec", type text}, {"VideoCodec", type text}, {"AvgJitterMs", type number}, {"MaxJitterMs", type number}, {"AvgRoundTripMs", type number}, {"MaxRoundTripMs", type number}, {"AvgPacketLossRate", type number}, {"MaxPacketLossRate", type number}, {"AvgConcealedRatio", type number}, {"MaxConcealedRatio", type number}, {"AvgAudioDegradation", type number}, {"PacketUtilization", Int64.Type}, {"CallerConnectionType", type text}, {"CallerWifiBand", type text}, {"CalleeConnectionType", type text}, {"CalleeWifiBand", type text}, {"TransportProtocol", type text}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
+

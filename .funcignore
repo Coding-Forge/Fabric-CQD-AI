@@ -1,0 +1,9 @@
+.git/
+.venv/
+tests/
+infra/
+samples/
+artifacts/
+__pycache__/
+local.settings.json
+*.md

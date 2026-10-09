@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CQD Analytics POC</title>
+<style>
+  :root { --ink: #1b1f24; --muted: #57606a; --line: #d0d7de; --accent: #0a5cad; --bg: #f6f8fa; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--ink); background: #fff; }
+  header { background: var(--accent); color: #fff; padding: 48px 20px; }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 0 20px; }
+  header .wrap { padding: 0; }
+  h1 { margin: 0 0 8px; font-size: 2rem; }
+  header p { margin: 0; max-width: 680px; opacity: .92; }
+  nav { background: var(--bg); border-bottom: 1px solid var(--line); position: sticky; top: 0; }
+  nav .wrap { display: flex; flex-wrap: wrap; gap: 4px 18px; padding-top: 10px; padding-bottom: 10px; }
+  nav a { color: var(--accent); text-decoration: none; font-size: .95rem; }
+  nav a:hover { text-decoration: underline; }
+  section { padding: 28px 0 8px; }
+  h2 { margin: 0 0 10px; font-size: 1.4rem; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+  h3 { margin: 18px 0 4px; font-size: 1.05rem; }
+  code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .88rem; }
+  code { background: var(--bg); padding: 1px 5px; border-radius: 4px; }
+  pre { background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: .95rem; }
+  th, td { text-align: left; border: 1px solid var(--line); padding: 7px 10px; vertical-align: top; }
+  th { background: var(--bg); }
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 8px; margin: 14px 0; }
+  .flow div { flex: 1 1 150px; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; background: var(--bg); font-size: .9rem; }
+  .flow b { display: block; color: var(--accent); }
+  .note { border-left: 4px solid #d4a72c; background: #fff8c5; padding: 10px 14px; margin: 14px 0; border-radius: 0 6px 6px 0; }
+  footer { margin-top: 36px; padding: 20px 0 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: .9rem; }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>CQD Analytics POC</h1>
+    <p>Teams call quality data from Microsoft Graph, landed in Azure Data Lake and Microsoft Fabric, reported through a Direct Lake semantic model, and explored with an AI chat app. Built for Microsoft 365 GCC High and Azure Government.</p>
+  </div>
+</header>
+<nav><div class="wrap">
+  <a href="#overview">Overview</a><a href="#architecture">Architecture</a><a href="#pipeline">Pipeline</a>
+  <a href="#report">Report</a><a href="#chat">Chat app</a><a href="#setup">Setup</a><a href="#security">Security</a><a href="#status">Status</a>
+</div></nav>
+
+<main class="wrap">
+<div class="note"><strong>Proof of concept.</strong> This is prepared code and a working demonstration, not a deployed or customer-accepted solution. The quality classification thresholds are illustrative and are not verified CQD reporting equivalence.</div>
+
+<section id="overview">
+  <h2>Overview</h2>
+  <p>Call Quality Dashboard (CQD) data is not directly exportable in a form that fits a modern analytics stack. This POC pulls call records from the Microsoft Graph <code>callRecords</code> API, keeps every version as an immutable raw snapshot, flattens them into curated tables, and serves them to a Power BI report and a natural-language chat page.</p>
+  <ul>
+    <li><b>Source:</b> Microsoft 365 GCC High through Graph (<code>graph.microsoft.us</code>), read-only, application permission <code>CallRecords.Read.All</code>.</li>
+    <li><b>Storage:</b> ADLS Gen2 Bronze, then Fabric Lakehouse Delta tables (Silver and Gold).</li>
+    <li><b>Reporting:</b> Direct Lake semantic model with a two-page report.</li>
+    <li><b>AI:</b> Azure OpenAI answers questions by running read-only SQL over the curated tables.</li>
+  </ul>
+</section>
+
+<section id="architecture">
+  <h2>Architecture</h2>
+  <div class="flow">
+    <div><b>Graph</b>callRecords API, GCC High</div>
+    <div><b>Bronze</b>ADLS Gen2, immutable JSON snapshots per call version</div>
+    <div><b>Silver</b>Lakehouse Delta tables, latest version per call</div>
+    <div><b>Gold</b>Call summary and stream quality, rebuilt from Silver</div>
+    <div><b>Consumers</b>Direct Lake report, chat app</div>
+  </div>
+  <table>
+    <tr><th>Layer</th><th>Contents</th></tr>
+    <tr><td>Bronze</td><td>Exact Graph response bodies with request IDs and ingest time. A <code>control</code> ledger makes reruns safe.</td></tr>
+    <tr><td>Silver</td><td><code>silver_calls</code>, <code>silver_participants</code>, <code>silver_sessions</code>, <code>silver_segments</code>, <code>silver_mediastreams</code>. One current version per call.</td></tr>
+    <tr><td>Gold</td><td><code>gold_call_summary</code> (one row per call) and <code>gold_stream_quality</code> (one row per media stream with a Good/Fair/Poor label).</td></tr>
+  </table>
+  <p>Users are pseudonymized with a salted hash before they reach Silver, so names, UPNs and IP addresses are not exposed to reports or to the model.</p>
+</section>
+
+<section id="pipeline">
+  <h2>Pipeline</h2>
+  <p>A Fabric pipeline runs two notebooks in sequence on an hourly schedule:</p>
+  <ol>
+    <li><b>Ingest</b> (<code>notebooks/cqd_ingest_graph_to_bronze.ipynb</code>): reads the service principal secret from Azure Key Vault, pulls call records for a 24-hour lookback, and writes new versions to Bronze. Versions already in the ledger are skipped.</li>
+    <li><b>Transform</b> (<code>notebooks/cqd_bronze_to_silver_gold.ipynb</code>): flattens Bronze into Silver, replacing child tables per call and merging <code>silver_calls</code> last so a failed run self-repairs, then rebuilds Gold.</li>
+  </ol>
+  <p>An end-to-end run takes about eight minutes, mostly Spark startup. The Key Vault secret is fetched through the vault REST API because <code>notebookutils</code> rejects Azure Government vault hosts.</p>
+</section>
+
+<section id="report">
+  <h2>Report</h2>
+  <p>A Direct Lake semantic model reads the Silver and Gold tables in place, with no import copy. The report has two pages covering call volume, sessions, participants, and per-stream jitter, round-trip time and packet loss. A local Power BI Project in <code>PBIP-Local/</code> provides the same model over exported sample CSVs for offline exploration.</p>
+</section>
+
+<section id="chat">
+  <h2>Chat app</h2>
+  <p><code>chat/</code> is a local page where users ask questions in plain language. It reads <strong>only the Silver and Gold tables</strong>, never Bronze files.</p>
+  <ol>
+    <li>Lists the <code>silver_*</code> and <code>gold_*</code> tables through the OneLake API.</li>
+    <li>Replays each Delta <code>_delta_log</code> to find the active parquet files and loads them into in-memory SQLite.</li>
+    <li>Azure OpenAI answers by calling a read-only <code>run_sql</code> tool. Only <code>SELECT</code> is allowed, rows are capped at 200, and the server binds to localhost.</li>
+  </ol>
+  <h3>Source and confidence score</h3>
+  <p>Every answer shows the SQL that ran, the parquet files read, and a score from 0 to 100:</p>
+  <table>
+    <tr><th>Component</th><th>Weight</th><th>Meaning</th></tr>
+    <tr><td>Query success</td><td>25%</td><td>Queries ran without error and returned rows, and were not truncated.</td></tr>
+    <tr><td>Answer grounded in results</td><td>45%</td><td>Share of numbers in the answer that appear in the query results.</td></tr>
+    <tr><td>Source completeness</td><td>30%</td><td>Tables read, scaled by how many streams actually reported metrics.</td></tr>
+  </table>
+  <p>Bands are High (80 or more), Medium (50 to 79) and Low (below 50). The score is capped at 20 when no query returned rows. <strong>It is a heuristic, not a measured accuracy.</strong></p>
+</section>
+
+<section id="setup">
+  <h2>Setup</h2>
+  <p>Nothing environment-specific is stored in the repository. Set these in your shell profile:</p>
+<pre><code>export FABRIC_TENANT_ID=&lt;tenant-id&gt;
+export FABRIC_CLIENT_ID=&lt;service-principal-client-id&gt;
+export FABRIC_CLIENT_SECRET=&lt;from a secret store&gt;
+export ONELAKE_HOST=&lt;onelake-dfs-host&gt;
+export FABRIC_WORKSPACE=&lt;workspace&gt;
+export FABRIC_LAKEHOUSE=&lt;lakehouse&gt;
+export AZURE_OPENAI_ENDPOINT=&lt;endpoint&gt;
+export AZURE_OPENAI_API_KEY=&lt;key&gt;
+export CQD_STORAGE_ACCOUNT=&lt;storage-account&gt;   # cqd.ingest only</code></pre>
+<pre><code>python -m venv .venv &amp;&amp; .venv/bin/pip install -r requirements.txt -r chat/requirements.txt
+.venv/bin/python -m chat.server --check   # reads the tables only; no model needed
+CHAT_PORT=8001 .venv/bin/python -m chat.server</code></pre>
+  <p>The Fabric notebooks run in the cloud and cannot read your shell profile. Set their parameters (<code>TENANT_ID</code>, <code>CLIENT_ID</code>, <code>STORAGE_ACCOUNT</code>, <code>KEY_VAULT_URL</code>, <code>SECRET_NAME</code>) in your Fabric copy; the committed notebook contains placeholders and stops if they are not replaced.</p>
+  <p>Run the tests with <code>.venv/bin/python -m unittest tests.test_chat tests.test_graph tests.test_probe tests.test_storage tests.test_functions</code>.</p>
+</section>
+
+<section id="security">
+  <h2>Security</h2>
+  <ul>
+    <li>Secrets live in Azure Key Vault or environment variables, never in source or notebooks.</li>
+    <li>Raw call data and generated samples are Git-ignored.</li>
+    <li>Identifiers such as tenant, client, storage and vault names are placeholders in the repository.</li>
+    <li>Users are hashed before reaching Silver, Gold, the report or the model.</li>
+    <li>The chat SQL guard allows only <code>SELECT</code>/<code>WITH</code>, forbids write keywords, and runs with <code>PRAGMA query_only=ON</code>.</li>
+    <li>Grant the service principal only the roles it needs: Graph <code>CallRecords.Read.All</code>, workspace access, and Key Vault secret read.</li>
+  </ul>
+</section>
+
+<section id="status">
+  <h2>Status and limits</h2>
+  <ul>
+    <li>Verified end to end on a small sample: 5 calls, 10 sessions and 60 media streams, matching between the pipeline, report and chat.</li>
+    <li>About 62% of streams report quality metrics; the rest are NULL because Teams did not report them.</li>
+    <li>Not yet tested: scale and Graph throttling at 100K+ records per day, and an unattended scheduled run after secret rotation.</li>
+    <li>The chat reads tables into memory, which suits a POC but not large volumes.</li>
+  </ul>
+</section>
+</main>
+
+<footer><div class="wrap">Source: the repository README and notebooks. Prepared for Microsoft 365 GCC High and Azure Government.</div></footer>
+</body>
+</html>

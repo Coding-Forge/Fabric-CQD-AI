@@ -1,0 +1,178 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "p2tablecalls00001",
+  "position": {
+    "x": 10,
+    "y": 650,
+    "z": 5,
+    "height": 410,
+    "width": 1900,
+    "tabOrder": 5
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Calls"
+                    }
+                  },
+                  "Property": "CallLabel"
+                }
+              },
+              "queryRef": "Calls.CallLabel",
+              "nativeQueryRef": "CallLabel"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Calls"
+                    }
+                  },
+                  "Property": "CallType"
+                }
+              },
+              "queryRef": "Calls.CallType",
+              "nativeQueryRef": "CallType"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Calls"
+                    }
+                  },
+                  "Property": "Modalities"
+                }
+              },
+              "queryRef": "Calls.Modalities",
+              "nativeQueryRef": "Modalities"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Calls"
+                    }
+                  },
+                  "Property": "Avg Call Duration (min)"
+                }
+              },
+              "queryRef": "Calls.Avg Call Duration (min)",
+              "nativeQueryRef": "Avg Call Duration (min)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Sessions"
+                    }
+                  },
+                  "Property": "Session Count"
+                }
+              },
+              "queryRef": "Sessions.Session Count",
+              "nativeQueryRef": "Session Count"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Participants"
+                    }
+                  },
+                  "Property": "Participant Count"
+                }
+              },
+              "queryRef": "Participants.Participant Count",
+              "nativeQueryRef": "Participant Count"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "MediaStreams"
+                    }
+                  },
+                  "Property": "Avg Jitter (ms)"
+                }
+              },
+              "queryRef": "MediaStreams.Avg Jitter (ms)",
+              "nativeQueryRef": "Avg Jitter (ms)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "MediaStreams"
+                    }
+                  },
+                  "Property": "Avg Round Trip (ms)"
+                }
+              },
+              "queryRef": "MediaStreams.Avg Round Trip (ms)",
+              "nativeQueryRef": "Avg Round Trip (ms)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "MediaStreams"
+                    }
+                  },
+                  "Property": "Avg Packet Loss %"
+                }
+              },
+              "queryRef": "MediaStreams.Avg Packet Loss %",
+              "nativeQueryRef": "Avg Packet Loss %"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "MediaStreams"
+                    }
+                  },
+                  "Property": "Max Packet Loss %"
+                }
+              },
+              "queryRef": "MediaStreams.Max Packet Loss %",
+              "nativeQueryRef": "Max Packet Loss %"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "MediaStreams"
+                    }
+                  },
+                  "Property": "Good Stream %"
+                }
+              },
+              "queryRef": "MediaStreams.Good Stream %",
+              "nativeQueryRef": "Good Stream %"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

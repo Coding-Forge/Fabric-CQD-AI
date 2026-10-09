@@ -1,0 +1,38 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "card03partic0000001",
+  "position": {
+    "x": 630.0999063378074,
+    "y": 60.998720819283569,
+    "z": 3,
+    "height": 110,
+    "width": 290,
+    "tabOrder": 3
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Participants"
+                    }
+                  },
+                  "Property": "Participant Count"
+                }
+              },
+              "queryRef": "Participants.Participant Count",
+              "nativeQueryRef": "Participant Count"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

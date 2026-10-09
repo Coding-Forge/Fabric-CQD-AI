@@ -1,0 +1,107 @@
+table Sessions
+	lineageTag: 6b0d3c1e-5a52-4d0e-9a53-0f3c9d1b0003
+
+	measure 'Session Count' = DISTINCTCOUNT(Sessions[SessionId])
+		formatString: 0
+		lineageTag: 8bcaa333-bc7e-4e59-930d-f0c9fe2fc21d
+
+	measure 'Avg Session Duration (min)' = DIVIDE(AVERAGE(Sessions[DurationSeconds]), 60)
+		formatString: 0.0
+		lineageTag: d9f7ec28-4f1e-4a67-8237-a86d678d59ee
+
+	measure 'Failed Sessions' = CALCULATE(DISTINCTCOUNT(Sessions[SessionId]), NOT ISBLANK(Sessions[FailureReason]))
+		formatString: 0
+		lineageTag: 7fa0e74b-99b1-44d3-8ffe-f1b76b2e44ca
+
+	column CallId
+		dataType: string
+		lineageTag: 2b00cdc6-3436-41d9-b552-c064ec9512f5
+		summarizeBy: none
+		sourceColumn: CallId
+
+	column SessionId
+		dataType: string
+		lineageTag: 9fa8dd21-3fa6-4bbd-b0aa-b788a2cd3820
+		summarizeBy: none
+		sourceColumn: SessionId
+
+	column Modalities
+		dataType: string
+		lineageTag: 53197909-260b-46dd-87ec-1382d0afb29a
+		summarizeBy: none
+		sourceColumn: Modalities
+
+	column StartDateTime
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 4c72ab2a-abbe-4455-a2d4-42f72291e690
+		summarizeBy: none
+		sourceColumn: StartDateTime
+
+	column EndDateTime
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 21bd871e-ba9c-436a-9808-27e0338933af
+		summarizeBy: none
+		sourceColumn: EndDateTime
+
+	column DurationSeconds
+		dataType: double
+		lineageTag: 10b728dc-7462-4c7d-a509-5206c50b2ef8
+		summarizeBy: sum
+		sourceColumn: DurationSeconds
+
+	column CallerKey
+		dataType: string
+		lineageTag: 3588e274-9fa2-4d8b-b9ee-ef1429bf631a
+		summarizeBy: none
+		sourceColumn: CallerKey
+
+	column CallerPlatform
+		dataType: string
+		lineageTag: f795a88e-5bea-4652-82dc-cbee95d32e44
+		summarizeBy: none
+		sourceColumn: CallerPlatform
+
+	column CallerProduct
+		dataType: string
+		lineageTag: c13d31c3-16d8-42ac-9300-d8c4c511e316
+		summarizeBy: none
+		sourceColumn: CallerProduct
+
+	column CalleePlatform
+		dataType: string
+		lineageTag: 1c377cb6-a8ac-4167-a6ac-7a1e887f2d79
+		summarizeBy: none
+		sourceColumn: CalleePlatform
+
+	column CalleeProduct
+		dataType: string
+		lineageTag: 80dc3450-0f1a-4abc-a3c8-881a8cf03675
+		summarizeBy: none
+		sourceColumn: CalleeProduct
+
+	column FailureStage
+		dataType: string
+		lineageTag: d9439799-6c4a-4f2c-9944-83e7a4ca3eec
+		summarizeBy: none
+		sourceColumn: FailureStage
+
+	column FailureReason
+		dataType: string
+		lineageTag: 856fe7ad-a1fb-49c9-8d65-bd9cb20859de
+		summarizeBy: none
+		sourceColumn: FailureReason
+
+	partition Sessions = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(SamplesFolder & "\Sessions.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"CallId", type text}, {"SessionId", type text}, {"Modalities", type text}, {"StartDateTime", type datetimezone}, {"EndDateTime", type datetimezone}, {"DurationSeconds", type number}, {"CallerKey", type text}, {"CallerPlatform", type text}, {"CallerProduct", type text}, {"CalleePlatform", type text}, {"CalleeProduct", type text}, {"FailureStage", type text}, {"FailureReason", type text}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
+

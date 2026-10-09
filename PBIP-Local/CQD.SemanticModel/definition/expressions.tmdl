@@ -1,0 +1,5 @@
+expression SamplesFolder = "<path-to-repo>\samples\powerbi" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 6b0d3c1e-5a52-4d0e-9a53-0f3c9d1a0001
+
+	annotation PBI_ResultType = Text
+

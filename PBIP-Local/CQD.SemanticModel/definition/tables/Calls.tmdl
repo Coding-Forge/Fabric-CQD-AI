@@ -1,0 +1,90 @@
+table Calls
+	lineageTag: 6b0d3c1e-5a52-4d0e-9a53-0f3c9d1b0001
+
+	measure 'Call Count' = DISTINCTCOUNT(Calls[CallId])
+		formatString: 0
+		lineageTag: f12a0b5b-d8d3-4d00-a8e1-96628667a6de
+
+	measure 'Avg Call Duration (min)' = DIVIDE(AVERAGE(Calls[DurationSeconds]), 60)
+		formatString: 0.0
+		lineageTag: f41ec2c3-6707-48cc-8bc0-20776fc0fd47
+
+	measure 'Total Call Minutes' = DIVIDE(SUM(Calls[DurationSeconds]), 60)
+		formatString: 0.0
+		lineageTag: 7f3d1a05-762e-4efe-aa1d-2e4010ba9da1
+
+	column CallId
+		dataType: string
+		lineageTag: 4ce043dd-33fd-4b03-9070-4c7781d719c8
+		summarizeBy: none
+		sourceColumn: CallId
+
+	column Version
+		dataType: int64
+		lineageTag: 1bb1629c-d744-4602-a0c0-914943aec093
+		summarizeBy: none
+		sourceColumn: Version
+
+	column CallType
+		dataType: string
+		lineageTag: 6cbaf39a-d8c6-4217-b9de-1d69c6eecb22
+		summarizeBy: none
+		sourceColumn: CallType
+
+	column Modalities
+		dataType: string
+		lineageTag: ebeaa23b-5883-42b9-94f1-fd5d81d114ba
+		summarizeBy: none
+		sourceColumn: Modalities
+
+	column StartDateTime
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 2b078dc8-0f53-4e2f-8f59-bd1835948e9d
+		summarizeBy: none
+		sourceColumn: StartDateTime
+
+	column EndDateTime
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: e1db0576-b2d4-40ec-8de6-682fd6d34a82
+		summarizeBy: none
+		sourceColumn: EndDateTime
+
+	column DurationSeconds
+		dataType: double
+		lineageTag: b5aa7bce-0218-4179-b0ba-9dc69ae618f6
+		summarizeBy: sum
+		sourceColumn: DurationSeconds
+
+	column OrganizerKey
+		dataType: string
+		lineageTag: 3c2324f0-76e4-431b-9910-9be603e46b8c
+		summarizeBy: none
+		sourceColumn: OrganizerKey
+
+	column RetrievedAt
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: fddd19ea-da2d-4009-8fd6-0f72c1fef933
+		summarizeBy: none
+		sourceColumn: RetrievedAt
+
+	column CallLabel = FORMAT(Calls[StartDateTime], "MMM d HH:mm:ss")
+		dataType: string
+		lineageTag: 0e878602-deb2-44e9-8672-1aa6bd5dfb9f
+		summarizeBy: none
+		sortByColumn: StartDateTime
+
+	partition Calls = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(SamplesFolder & "\Calls.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"CallId", type text}, {"Version", Int64.Type}, {"CallType", type text}, {"Modalities", type text}, {"StartDateTime", type datetimezone}, {"EndDateTime", type datetimezone}, {"DurationSeconds", type number}, {"OrganizerKey", type text}, {"RetrievedAt", type datetimezone}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
+

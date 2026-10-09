@@ -1,0 +1,89 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "chart3platform000001",
+  "position": {
+    "x": 1290,
+    "y": 180,
+    "z": 9,
+    "height": 380,
+    "width": 620,
+    "tabOrder": 9
+  },
+  "visual": {
+    "visualType": "donutChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Sessions"
+                    }
+                  },
+                  "Property": "CallerPlatform"
+                }
+              },
+              "queryRef": "Sessions.CallerPlatform",
+              "nativeQueryRef": "CallerPlatform",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Sessions"
+                    }
+                  },
+                  "Property": "Session Count"
+                }
+              },
+              "queryRef": "Sessions.Session Count",
+              "nativeQueryRef": "Session Count"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "e431963ebf3640d61f46",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Sessions"
+              }
+            },
+            "Property": "CallerPlatform"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "b40f08081eed79933811",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Sessions"
+              }
+            },
+            "Property": "Session Count"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
+  }
+}

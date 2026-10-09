@@ -1,0 +1,49 @@
+table Participants
+	lineageTag: 6b0d3c1e-5a52-4d0e-9a53-0f3c9d1b0002
+
+	measure 'Participant Count' = DISTINCTCOUNT(Participants[ParticipantKey])
+		formatString: 0
+		lineageTag: e1eb5dc1-2694-4857-b04d-61c148b819ff
+
+	measure 'Guest Participants' = CALCULATE(DISTINCTCOUNT(Participants[ParticipantKey]), Participants[IsGuest] = TRUE())
+		formatString: 0
+		lineageTag: 744640cb-085b-4cf0-b91f-174b3c50d42d
+
+	column CallId
+		dataType: string
+		lineageTag: 7d499fe4-b318-49ac-8fc9-b745c8df56c7
+		summarizeBy: none
+		sourceColumn: CallId
+
+	column ParticipantKey
+		dataType: string
+		lineageTag: a5728ac3-20d5-4047-981c-f439bf74cab5
+		summarizeBy: none
+		sourceColumn: ParticipantKey
+
+	column IsGuest
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 2685f45e-95ca-44e4-a015-d5d5eab06840
+		summarizeBy: none
+		sourceColumn: IsGuest
+
+	column IsOrganizer
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: d567b723-35ff-47df-ad39-42f410bcd2d5
+		summarizeBy: none
+		sourceColumn: IsOrganizer
+
+	partition Participants = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(SamplesFolder & "\Participants.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"CallId", type text}, {"ParticipantKey", type text}, {"IsGuest", type logical}, {"IsOrganizer", type logical}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
+

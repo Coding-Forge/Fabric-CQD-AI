@@ -1,0 +1,69 @@
+table Segments
+	lineageTag: 6b0d3c1e-5a52-4d0e-9a53-0f3c9d1b0004
+
+	measure 'Segment Count' = COUNTROWS(Segments)
+		formatString: 0
+		lineageTag: 7698d060-2143-4d6f-b9ec-7264e1682788
+
+	column CallId
+		dataType: string
+		lineageTag: a1d96e3b-a950-45e5-967c-de1d336e84f9
+		summarizeBy: none
+		sourceColumn: CallId
+
+	column SessionId
+		dataType: string
+		lineageTag: 2d43c8b0-751b-4dfd-9b6e-03471d26c7e9
+		summarizeBy: none
+		sourceColumn: SessionId
+
+	column SegmentId
+		dataType: string
+		lineageTag: f02d3b6d-a306-4f09-a1ee-01d466c64c71
+		summarizeBy: none
+		sourceColumn: SegmentId
+
+	column StartDateTime
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: b7f0a41d-1ad2-410b-b29b-298088a92b62
+		summarizeBy: none
+		sourceColumn: StartDateTime
+
+	column EndDateTime
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 35232804-4ba0-408c-af19-be22b3b88cea
+		summarizeBy: none
+		sourceColumn: EndDateTime
+
+	column DurationSeconds
+		dataType: double
+		lineageTag: 59dac9d5-6e5a-4a01-b5a9-0c3e4c29a2a4
+		summarizeBy: sum
+		sourceColumn: DurationSeconds
+
+	column FailureStage
+		dataType: string
+		lineageTag: 5de2bb5f-dc66-44d2-aa61-9fe421e4a7da
+		summarizeBy: none
+		sourceColumn: FailureStage
+
+	column FailureReason
+		dataType: string
+		lineageTag: fe73e93b-6781-4181-8bc8-883682d7f953
+		summarizeBy: none
+		sourceColumn: FailureReason
+
+	partition Segments = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(SamplesFolder & "\Segments.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"CallId", type text}, {"SessionId", type text}, {"SegmentId", type text}, {"StartDateTime", type datetimezone}, {"EndDateTime", type datetimezone}, {"DurationSeconds", type number}, {"FailureStage", type text}, {"FailureReason", type text}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
+

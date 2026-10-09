@@ -1,0 +1,16 @@
+relationship cqd-sessions-calls
+	fromColumn: Sessions.CallId
+	toColumn: Calls.CallId
+
+relationship cqd-participants-calls
+	fromColumn: Participants.CallId
+	toColumn: Calls.CallId
+
+relationship cqd-segments-sessions
+	fromColumn: Segments.SessionId
+	toColumn: Sessions.SessionId
+
+relationship cqd-streams-sessions
+	fromColumn: MediaStreams.SessionId
+	toColumn: Sessions.SessionId
+

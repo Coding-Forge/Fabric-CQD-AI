@@ -1,0 +1,57 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "p2linertt00000001",
+  "position": {
+    "x": 430,
+    "y": 60,
+    "z": 4,
+    "height": 570,
+    "width": 1480,
+    "tabOrder": 4
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Calls"
+                    }
+                  },
+                  "Property": "CallLabel"
+                }
+              },
+              "queryRef": "Calls.CallLabel",
+              "nativeQueryRef": "CallLabel",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "MediaStreams"
+                    }
+                  },
+                  "Property": "Avg Round Trip (ms)"
+                }
+              },
+              "queryRef": "MediaStreams.Avg Round Trip (ms)",
+              "nativeQueryRef": "Avg Round Trip (ms)"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

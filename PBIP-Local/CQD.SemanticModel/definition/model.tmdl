@@ -1,0 +1,23 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	valueFilterBehavior: independent
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_ProTooling = ["DevMode"]
+
+annotation PBI_QueryOrder = ["Calls","Participants","Sessions","Segments","MediaStreams","SamplesFolder"]
+
+ref table Calls
+ref table Participants
+ref table Sessions
+ref table Segments
+ref table MediaStreams
+
+ref cultureInfo en-US
+

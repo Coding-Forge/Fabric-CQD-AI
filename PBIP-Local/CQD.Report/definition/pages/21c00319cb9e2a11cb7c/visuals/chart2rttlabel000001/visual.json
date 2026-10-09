@@ -1,0 +1,89 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "chart2rttlabel000001",
+  "position": {
+    "x": 650,
+    "y": 180,
+    "z": 8,
+    "height": 380,
+    "width": 620,
+    "tabOrder": 8
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "MediaStreams"
+                    }
+                  },
+                  "Property": "MediaLabel"
+                }
+              },
+              "queryRef": "MediaStreams.MediaLabel",
+              "nativeQueryRef": "MediaLabel",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "MediaStreams"
+                    }
+                  },
+                  "Property": "Avg Round Trip (ms)"
+                }
+              },
+              "queryRef": "MediaStreams.Avg Round Trip (ms)",
+              "nativeQueryRef": "Avg Round Trip (ms)"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "4cf0e9e13f7f4fc2904e",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "MediaStreams"
+              }
+            },
+            "Property": "MediaLabel"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "621937eac6a1f2e57719",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "MediaStreams"
+              }
+            },
+            "Property": "Avg Round Trip (ms)"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
+  }
+}
